@@ -17,6 +17,10 @@ end
 
 function team:increment_domination()
 	self.domination = self.domination + self.increment
+	if ( self.domination >= domination_config.game_goal ) then
+	  domination.stop_game()
+	  minetest.chat_send_all(self.name.." team wins!")
+	end
 end
 
 function team:create()
