@@ -7,8 +7,16 @@ team.name = ""
 team.skin = ""
 team.players = {}
 
-function team:capturePoint()
-  self.iterator = self.iterator + domination_config.capture_increment
+function team:capture_node()
+  self.increment = self.increment + domination_config.capture_increment
+end
+
+function team:lose_node()
+	self.increment = self.increment - domination_config.capture_increment
+end
+
+function team:increment_domination()
+	self.domination = self.domination + self.increment
 end
 
 function team:create()
