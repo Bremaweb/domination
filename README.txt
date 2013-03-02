@@ -1,50 +1,41 @@
-The main game for the Minetest game engine [minetest_game]
-==========================================================
+===========================================================
+Minetest Domination
+===========================================================
 
-To build the wholeness of the Minetest project, insert this repository as
-  /games/minetest_game
-in the Minetest Engine.
+This is a new type of game play for Minetest. Each team is trying to retain control of certain
+nodes within the map. A player takes control of a node by punching the node. Then they must
+defend it by whatever means. Every 5 seconds a team retains control of a node or multiple nodes
+the faster they reach the domination goal for the map.
 
-The Minetest Engine can be found in:
-  https://github.com/minetest/minetest/
+===========================================================
+The Configuration
+===========================================================
 
-Compatibility
---------------
-The minetest_game github master HEAD is generally compatible with the github
-master HEAD of minetest.
+Edit config.lua to setup the game to your preferences:
 
-Additionally, when the minetest engine is tagged to be a certain version (eg.
-0.4.dev-20120326), minetest_game is tagged with the version too.
+domination_config.game_goal - this is how many points a team must reach to win the game, this can be any number
+domination_config.capture_increment - This is how many points a team receives every 5 seconds for each node they have control of. So if this value is .5 and a team controls 3 nodes they will receive 1.5 points every 5 seconds.
+domination_config.teams - This is a maximum of 4
+domination_config.default_spawn - (e.g. {x=0,y=0,z=0} ) This is the position of the default spawn, when a player joins the server they will be moved to this position. It's best that this area be outside of the game area. This area should be a relatively flat area as players will be placed anywhere +/-6 blocks on the z and x axis from your defined spawn point.
+domination_config.protect_size - This is how far around a domination node that is protected, this prevents people completely burying nodes
+domination_config.area - This is a pair of coordinates that defines the arena. (e.g. { {x=795,y=-45,z=801} , {x=1011,y=45,z=1168} } )
 
-When stable releases are made, minetest_game is packaged and made available in
-  http://minetest.net/download.php
-and in case the repository has grown too much, it may be reset. In that sense,
-this is not a "real" git repository. (Package maintainers please note!)
+===========================================================
+Team Definitions
+===========================================================
+These should mostly be left alone except for the spawn points
 
-License of source code
-----------------------
-Copyright (C) 2010-2012 celeron55, Perttu Ahola <celeron55@gmail.com>
-See README.txt in each mod directory for information about other authors.
+The spawn is the area where the team will spawn when the game starts
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 2.1 of the License, or
-(at your option) any later version.
+team_def[1] = { name="Red", skin="domination_red_skin.png", spawn={x=805,y=9,z=1130}}
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License along
-with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+===============================================================
+Running The Game
+===============================================================
+These are the commands for playing, starting, and stopping the game
 
-License of media (textures and sounds)
---------------------------------------
-Copyright (C) 2010-2012 celeron55, Perttu Ahola <celeron55@gmail.com>
-See README.txt in each mod directory for information about other authors.
+/teams - lists the teams that are available
+/join <team> - joins a team
+/domination <start|stop> - starts or stops the game. When the game starts everybody's inventory is cleared, and they are moved to their team spawn points. When the game stops, inventory is cleared again and everybody is moved back to the main spawn point.
 
-Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)                                 
-http://creativecommons.org/licenses/by-sa/3.0/
-  
