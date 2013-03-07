@@ -5,17 +5,20 @@ domination = {}
 domination.teams = {}
 
 domination.player_team_index = {}
-
+domination.found_nodes = {}
 domination.game_running = false
 domination.next_check = 0
+domination.next_iteration = 0
 
 function domination.step (dtime)
   -- this function will do a lot of the heavy lifting when the game is running
   if ( domination.game_running == true ) then
-      for t in pairs(domination.teams) do
-		domination.teams[t]:increment_domination()
+	  if ( os.time() > domination.next_iteration ) then
+		for t in pairs(domination.teams) do
+			domination.teams[t]:increment_domination()
+		end
+		domination.next_iteration = os.time() + 5
 	  end
-	  
 	  if ( os.time() > domination.next_check ) then
 		minetest.chat_send_all("-----------------")
 		for t in pairs(domination.teams) do
@@ -23,7 +26,7 @@ function domination.step (dtime)
 		  
 			minetest.chat_send_all(domination.teams[t].name..": "..tostring(domination.teams[t].domination).."%")
 		end
-		domination.next_check = os.time() + 30
+		domination.next_check = os.time() + 15
 	  end	  
   end
 end
@@ -42,7 +45,7 @@ function domination.register_team (team_name,team_skin,team_spawn)
 	tiles={"domination_block_"..team_id..".png"},
 	light_source=6,
 	buildable_to=false,
-	
+	groups = { domination_block=1 },
 	-- cannot be dug by anybody
 	can_dig = function(pos,player)
 		if ( domination.game_running == true ) then
@@ -59,9 +62,16 @@ function domination.register_team (team_name,team_skin,team_spawn)
 end
 
 function domination.join_team (name, p_team)
-  if ( domination.game_running == false ) then
+  
     -- see if they have already joined a team
-    for t in pairs(domination.teams) do
+    local t = domination.get_player_team(minetest.env:get_player_by_name(name))
+    
+    if ( domination.game_running == true and t ~= nil ) then
+      minetest.chat_send_player(name,"You can't change teams in the middle of a game")
+      return
+    end
+    
+    if ( t ~= nil ) then
       for i,p in ipairs(domination.teams[t].players) do
 	if p == name then
 	  table.remove(domination.teams[t].players,i)
@@ -73,32 +83,37 @@ function domination.join_team (name, p_team)
     table.insert(domination.teams[string.lower(p_team)].players,name)
 	
 	-- set the appropriate skin
-	p = minetest.env:get_player_by_name(name)
+	local p = minetest.env:get_player_by_name(name)
 	p:set_properties({
 		visual="mesh",
 		textures={domination.teams[string.lower(p_team)].skin},
 		visual_size={x=1,y=1}		
 	})
-	domination.player_team_index[p] = p_team
-	
-	return true
-  else
-    mintest.chat_send_player(name,"Sorry you are unable to change teams while to game it running")
-    return nil
-  end
-  
+	domination.player_team_index[p] = string.lower(p_team)
+
+    if ( domination.game_running == true ) then
+      -- spawn them in the game
+      local player = minetest.env:get_player_by_name(name)
+      local pos = get_coord_near(domination.teams[string.lower(p_team)].spawn,{x=5,y=0,z=5})
+      player:moveto(pos)
+    end
+
+    minetest.chat_send_all(name.." has joined "..p_team.." team")
+    
+return true
+
 end
 
 function domination.get_player_team(player)
 	local name = player:get_player_name()
-	--[[for t in pairs(domination.teams) do
+	for t in pairs(domination.teams) do
 		for i,p in ipairs(domination.teams[t].players) do
 			if p == name then
 				return t
 			end
 		end
-	end]]
-	return domination.player_team_index[name]
+	end
+	return nil
 end
 
 function domination.punch_block(pos, node, puncher)
@@ -115,20 +130,23 @@ function domination.punch_block(pos, node, puncher)
 		local near = get_coord_near(pos,{x=20,y=10,z=20})
 		
 		minetest.chat_send_all(domination.teams[t].name.." captured a node near "..minetest.pos_to_string(near))
-		-- TODO
-		-- find the current team that has this node and remove it from their list
-		-- TODO
+		
+		-- remove the node from the current team
+		for i=1,domination_config.teams do
+		  if ( node.name == "domination:domination_block_"..string.lower(team_def[i].name) ) then
+		    domination.teams[string.lower(team_def[i].name)]:lose_node()
+		  end
+		end
+		
 		
 		minetest.env:set_node(pos,{name="domination:domination_block_"..t})
-		minetest.sound_play("domination_alert",{pos=pos,max_hear_distance=50,gain=10})
+		minetest.sound_play("domination_alert",{pos=pos,max_hear_distance=55,gain=15})
 	end
-	
+	table.insert(domination.found_nodes,pos)
 end
 
 function domination.start_game()
-	
-	-- find all domination team blocks in the world and reset them to the unclaimed block
-	-- I don't know if I can actually do this..
+	minetest.chat_send_all("Game preparing to start!")
 	
 	-- move players to the appropriate positions
 	for t in pairs(domination.teams) do
@@ -140,6 +158,7 @@ function domination.start_game()
 			minetest.log("action","Move player "..tostring(p))
 			
 			local pl = minetest.env:get_player_by_name(p)
+			pl:set_hp(20)
 			pl:moveto(pos)
 		end
 	end
@@ -150,12 +169,28 @@ end
 
 function domination.stop_game()
 -- move all players back to the spawn area	
-  
+  minetest.send_chat_all("Game is stopping")
   for _,player in ipairs(minetest.get_connected_players()) do
     local pos = get_coord_near(domination_config.default_spawn,{x=6,y=0,z=6})
     player:moveto(pos)
+    
+    -- remove any inventory they may have
+    domination.strip_inventory(player)
   end
   
+  -- reset the domination blocks
+  for _,p in ipairs(domination.found_nodes) do
+    minetest.env:set_node(p,{name="domination:domination_block"})
+  end
+  --[[ find all domination team blocks in the world and reset them to the unclaimed block
+	minetest.log("action","Game Area "..minetest.pos_to_string(domination_config.area[1]).." - "..minetest.pos_to_string(domination_config.area[2]))
+	local dnodes = minetest.env:find_nodes_in_area(domination_config.area[1],domination_config.area[2],{"domination:domination_block_red","domination:domination_block_green","domination:domination_block_blue","domination:domination_block_orange"})
+	for _,npos in ipairs(dnodes) do
+	  minetest.log("action","resetting block "..tostring(npos))
+	  minetest.env:remove_node(npos)
+	  minetest.env:add_node(npos,{name="domination_block"})
+	end]]
+	
 -- flag the game not running  
   domination.game_running = false
 end
@@ -165,22 +200,53 @@ function domination.player_join(player)
   -- move the player to the default spawn point
   local pos = get_coord_near(domination_config.default_spawn,{x=6,y=0,z=6})
   player:moveto(pos)
+  
+  -- strip any inventory they may have
+  domination.strip_inventory(player)
+  
+  minetest.chat_send_player(player:get_player_name(),"Welcome! Use /teams to see available teams, /join to join a team. Use /help to see other commands available")
 end
 
 
 function domination.player_leave(player)
-  
-  
+  local t = domination.get_player_team(player:get_player_name())
+  if ( t ~= nil ) then
+      for i,p in ipairs(domination.teams[t].players) do
+		if p == name then
+		table.remove(domination.teams[t].players,i)
+		end
+      end       
+  end
+  minetest.chat_send_all(player:get_player_name().." left the game")
 end
 
 
 function domination.player_die(player)
-    local t = domination.get_player_team(player)
-    local pos = get_coord_near(domination.teams[t].spawn,{x=5,y=0,z=5})
-    player:moveto(pos)
+	if domination.game_running == true then
+		local t = domination.get_player_team(player)
+		local pos = get_coord_near(domination.teams[t].spawn,{x=5,y=0,z=5})
+		player:moveto(pos)
+	else
+		local pos = get_coord_near(domination_config.default_spawn,{x=6,y=0,z=6})
+		player:moveto(pos)
+	end
+	return true
+end
+
+function domination.strip_inventory(player)
+-- rom PilzAdam's bones mod
+	local player_inv = player:get_inventory()
+
+		for i=1,player_inv:get_size("main") do
+			player_inv:set_stack("main", i, nil)
+		end
+		for i=1,player_inv:get_size("craft") do
+			player_inv:set_stack("craft", i, nil)
+		end
 end
 
 dofile( minetest.get_modpath("domination").."/config.lua" )
+dofile( minetest.get_modpath("domination").."/arena_setup.lua" )
 dofile( minetest.get_modpath("domination").."/chat_commands.lua" )
 dofile( minetest.get_modpath("domination").."/registers.lua" )
 
