@@ -169,9 +169,9 @@ end
 
 function domination.stop_game()
 -- move all players back to the spawn area	
-  minetest.send_chat_all("Game is stopping")
+  minetest.chat_send_all("Game is stopping")
   for _,player in ipairs(minetest.get_connected_players()) do
-    local pos = get_coord_near(domination_config.default_spawn,{x=6,y=0,z=6})
+    local pos = get_coord_near(domination_config.default_spawn,{x=4,y=0,z=4})
     player:moveto(pos)
     
     -- remove any inventory they may have
@@ -198,43 +198,45 @@ end
 
 function domination.player_join(player)
   -- move the player to the default spawn point
-  local pos = get_coord_near(domination_config.default_spawn,{x=6,y=0,z=6})
-  player:moveto(pos)
+  pteam = domination.get_player_team(player)
+  if ( domination.game_running == false or pteam == nil ) then
+	  local pos = get_coord_near(domination_config.default_spawn,{x=4,y=0,z=4})
+	  player:moveto(pos)
+	  
+	  -- strip any inventory they may have
+	  domination.strip_inventory(player)
+	  minetest.chat_send_player(player:get_player_name(),"Welcome! Use /teams to see available teams, /join to join a team. Use /help to see other commands available")
+  	return  	
+  end
   
-  -- strip any inventory they may have
-  domination.strip_inventory(player)
-  
-  minetest.chat_send_player(player:get_player_name(),"Welcome! Use /teams to see available teams, /join to join a team. Use /help to see other commands available")
+  if ( pteam ~= nil ) then
+  	local pos = get_coord_near(domination.teams[string.lower(pteam)].spawn,{x=4,y=0,z=4})
+  	player:moveto(pos)
+  	minetest.chat_send_all(player:get_player_name().." has joined ("..pteam..")")
+  end
 end
 
 
 function domination.player_leave(player)
-  local t = domination.get_player_team(player:get_player_name())
-  if ( t ~= nil ) then
-      for i,p in ipairs(domination.teams[t].players) do
-		if p == name then
-		table.remove(domination.teams[t].players,i)
-		end
-      end       
-  end
-  minetest.chat_send_all(player:get_player_name().." left the game")
+  local t = domination.get_player_team(player)  
+  minetest.chat_send_all(player:get_player_name().." left the game ("..tostring(t)..")")
 end
 
 
 function domination.player_die(player)
 	if domination.game_running == true then
 		local t = domination.get_player_team(player)
-		local pos = get_coord_near(domination.teams[t].spawn,{x=5,y=0,z=5})
+		local pos = get_coord_near(domination.teams[t].spawn,{x=4,y=0,z=4})
 		player:moveto(pos)
 	else
-		local pos = get_coord_near(domination_config.default_spawn,{x=6,y=0,z=6})
+		local pos = get_coord_near(domination_config.default_spawn,{x=4,y=0,z=4})
 		player:moveto(pos)
 	end
 	return true
 end
 
 function domination.strip_inventory(player)
--- rom PilzAdam's bones mod
+-- from PilzAdam's bones mod
 	local player_inv = player:get_inventory()
 
 		for i=1,player_inv:get_size("main") do

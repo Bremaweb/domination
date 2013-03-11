@@ -79,3 +79,27 @@ minetest.register_chatcommand("game_stat",{
 	  end	 
 	end
 })
+
+minetest.register_chatcommand("create_arena",{
+	params = "",
+	privs = {domination=true},
+	func = function ( name, param )
+		minetest.chat_send_player(name,"Creating arena, this may take a while...")
+		domination_arena.build_walls()	
+		minetest.chat_send_player(name,"Arena has been created!")
+	end
+})
+
+minetest.register_chatcommand("tc",{
+	params = "/tc <message>",
+	description = "Sends a chat only to your team members",
+	privs = {shout=true},
+	func = function (name, param)
+		local pteam = domination.get_player_team(minetest.env:get_player_by_name(name))
+		if ( pteam ~= nil ) then
+			for i,p in ipairs(domination.teams[pteam].players) do
+				minetest.chat_send_player(p,pteam..": "..param)
+			end
+		end
+	end
+})
