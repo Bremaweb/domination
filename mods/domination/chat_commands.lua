@@ -95,11 +95,6 @@ minetest.register_chatcommand("tc",{
 	description = "Sends a chat only to your team members",
 	privs = {shout=true},
 	func = function (name, param)
-		local pteam = domination.get_player_team(minetest.env:get_player_by_name(name))
-		if ( pteam ~= nil ) then
-			for i,p in ipairs(domination.teams[pteam].players) do
-				minetest.chat_send_player(p,pteam..": "..param)
-			end
-		end
+	  domination.team_chat(name,param)
 	end
 })

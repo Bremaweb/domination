@@ -235,6 +235,15 @@ function domination.player_die(player)
 	return true
 end
 
+function domination.team_chat(name,message)  
+      local pteam = domination.get_player_team(minetest.env:get_player_by_name(name))
+      if ( pteam ~= nil ) then
+	      for i,p in ipairs(domination.teams[pteam].players) do
+		      minetest.chat_send_player(p,pteam..": "..param)
+	      end
+      end
+end
+
 function domination.strip_inventory(player)
 -- from PilzAdam's bones mod
 	local player_inv = player:get_inventory()
@@ -251,6 +260,7 @@ dofile( minetest.get_modpath("domination").."/config.lua" )
 dofile( minetest.get_modpath("domination").."/arena_setup.lua" )
 dofile( minetest.get_modpath("domination").."/chat_commands.lua" )
 dofile( minetest.get_modpath("domination").."/registers.lua" )
+dofile( minetest.get_modpath("domination").."/protection.lua" )
 
 minetest.log("action","Setting up "..tostring(domination_config.teams).." teams")
 for i=1,domination_config.teams do

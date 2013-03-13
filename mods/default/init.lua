@@ -30,8 +30,9 @@ minetest.register_item(":", {
 		max_drop_level = 0,
 		groupcaps = {
 			fleshy = {times={[2]=0.75, [3]=0.6}, uses=0, maxlevel=1},
-			crumbly = {times={[2]=3.00, [3]=0.70}, uses=0, maxlevel=1},
-			snappy = {times={[3]=0.40}, uses=0, maxlevel=1},
+			crumbly = {times={[2]=2.20, [3]=1.50}, uses=0, maxlevel=1},
+			choppy = {times={[2]=5.00,[3]=3.50},uses=0,maxlevel=1},
+			snappy = {times={[3]=1.00}, uses=0, maxlevel=1},
 			oddly_breakable_by_hand = {times={[1]=7.00,[2]=4.00,[3]=1.40}, uses=0, maxlevel=3}
 		}
 	}
@@ -44,11 +45,12 @@ minetest.register_tool("default:pick_wood", {
 		full_punch_interval = 1.2,
 		max_drop_level=0,
 		groupcaps={
-			cracky = {times={[2]=2.00, [3]=1.20}, uses=10, maxlevel=1},
+			crumbly = {[2]=4.50, [3]=2.60}, uses=40, maxlevel=1},
+			cracky = {times={[2]=3.40, [3]=2.20}, uses=10, maxlevel=1},
 			fleshy = {times={[2]=0.95, [3]=0.6}, uses=15, maxlevel=1}
 		}
-	},
-})
+	}
+)
 minetest.register_tool("default:pick_stone", {
 	description = "Stone Pickaxe",
 	inventory_image = "default_tool_stonepick.png",
@@ -56,10 +58,11 @@ minetest.register_tool("default:pick_stone", {
 		full_punch_interval = 1.3,
 		max_drop_level=0,
 		groupcaps={
-			cracky = {times={[1]=3.00, [2]=1.20, [3]=0.80}, uses=20, maxlevel=1},
+			crumbly = {times={[1]=4.00, [2]=2.20, [3]=2.00}, uses=40, maxlevel=1},
+			cracky = {times={[1]=4.75, [2]=2.20, [3]=1.80}, uses=20, maxlevel=1},
 			fleshy = {times={[2]=0.7, [3]=0.5}, uses=25, maxlevel=1}
 		}
-	},
+	}
 })
 minetest.register_tool("default:pick_steel", {
 	description = "Steel Pickaxe",
@@ -68,11 +71,14 @@ minetest.register_tool("default:pick_steel", {
 		full_punch_interval = 1.0,
 		max_drop_level=1,
 		groupcaps={
+			crumbly = {times={[1]=3.50, [2]=2.00, [3]=1.70}, uses=40, maxlevel=1},
 			cracky = {times={[1]=4.00, [2]=1.60, [3]=1.00}, uses=30, maxlevel=2},
 			fleshy = {times={[2]=0.6, [3]=0.35}, uses=35, maxlevel=1}
 		}
 	},
 })
+
+--[[
 minetest.register_tool("default:pick_mese", {
 	description = "Mese Pickaxe",
 	inventory_image = "default_tool_mesepick.png",
@@ -87,6 +93,7 @@ minetest.register_tool("default:pick_mese", {
 		}
 	},
 })
+]]
 minetest.register_tool("default:shovel_wood", {
 	description = "Wooden Shovel",
 	inventory_image = "default_tool_woodshovel.png",
@@ -95,7 +102,7 @@ minetest.register_tool("default:shovel_wood", {
 		full_punch_interval = 1.2,
 		max_drop_level=0,
 		groupcaps={
-			crumbly = {times={[1]=3.00, [2]=0.80, [3]=0.50}, uses=10, maxlevel=1},
+			crumbly = {times={[1]=2.50, [2]=0.80, [3]=0.50}, uses=10, maxlevel=1},
 			fleshy = {times={[2]=1.05, [3]=0.70}, uses=25, maxlevel=1}
 		}
 	},
@@ -133,11 +140,13 @@ minetest.register_tool("default:axe_wood", {
 		full_punch_interval = 1.0,
 		max_drop_level=0,
 		groupcaps={
+			crumbly ={times={ [2]=4.50, [3]=2.60}, uses=40, maxlevel=1 },
 			choppy = {times={[2]=1.40, [3]=0.80}, uses=10, maxlevel=1},
 			fleshy = {times={[2]=0.70, [3]=0.50}, uses=5, maxlevel=1}
 		}
-	},
+	}
 })
+
 minetest.register_tool("default:axe_stone", {
 	description = "Stone Axe",
 	inventory_image = "default_tool_stoneaxe.png",
@@ -145,6 +154,7 @@ minetest.register_tool("default:axe_stone", {
 		full_punch_interval = 1.2,
 		max_drop_level=0,
 		groupcaps={
+			crumbly = {times={[1]=4.00, [2]=2.20, [3]=2.00}, uses=40, maxlevel=1},
 			choppy={times={[1]=3.00, [2]=1.00, [3]=0.60}, uses=20, maxlevel=1},
 			fleshy={times={[2]=0.60, [3]=0.40}, uses=15, maxlevel=1}
 		}
@@ -157,6 +167,7 @@ minetest.register_tool("default:axe_steel", {
 		full_punch_interval = 0.9,
 		max_drop_level=1,
 		groupcaps={
+			crumbly = {times={[1]=3.50, [2]=2.00, [3]=1.70}, uses=40, maxlevel=1},
 			choppy={times={[1]=3.00, [2]=1.60, [3]=1.00}, uses=30, maxlevel=2},
 			fleshy={times={[2]=0.40, [3]=0.25}, uses=25, maxlevel=1}
 		}
@@ -271,7 +282,7 @@ minetest.register_craft({
 		{'', 'default:stick', ''},
 	}
 })
-
+--[[
 minetest.register_craft({
 	output = 'default:pick_mese',
 	recipe = {
@@ -280,7 +291,7 @@ minetest.register_craft({
 		{'', 'default:stick', ''},
 	}
 })
-
+]]
 minetest.register_craft({
 	output = 'default:shovel_wood',
 	recipe = {
@@ -744,8 +755,8 @@ minetest.register_node("default:stone", {
 	description = "Stone",
 	tiles = {"default_stone.png"},
 	is_ground_content = true,
-	groups = {cracky=3, stone=1},
-	drop = 'default:cobble',
+	groups = {cracky=2, stone=1},
+	drop = 'default:stone',
 	legacy_mineral = true,
 	sounds = default.node_sound_stone_defaults(),
 })
@@ -754,7 +765,7 @@ minetest.register_node("default:desert_stone", {
 	description = "Desert Stone",
 	tiles = {"default_desert_stone.png"},
 	is_ground_content = true,
-	groups = {cracky=3, stone=1},
+	groups = {cracky=2, stone=1},
 	drop = 'default:desert_stone',
 	legacy_mineral = true,
 	sounds = default.node_sound_stone_defaults(),
@@ -764,7 +775,7 @@ minetest.register_node("default:stone_with_coal", {
 	description = "Coal Ore",
 	tiles = {"default_stone.png^default_mineral_coal.png"},
 	is_ground_content = true,
-	groups = {cracky=3},
+	groups = {cracky=2},
 	drop = 'default:coal_lump',
 	sounds = default.node_sound_stone_defaults(),
 })
@@ -773,11 +784,11 @@ minetest.register_node("default:stone_with_iron", {
 	description = "Iron Ore",
 	tiles = {"default_stone.png^default_mineral_iron.png"},
 	is_ground_content = true,
-	groups = {cracky=3},
+	groups = {cracky=2},
 	drop = 'default:iron_lump',
 	sounds = default.node_sound_stone_defaults(),
 })
-
+--[[
 minetest.register_node("default:stone_with_mese", {
 	description = "Mese Crystals in Stone",
 	tiles = {"default_stone.png^default_mineral_mese.png"},
@@ -786,7 +797,7 @@ minetest.register_node("default:stone_with_mese", {
 	drop = "default:mese_crystal",
 	sounds = default.node_sound_stone_defaults(),
 })
-
+]]
 minetest.register_node("default:dirt_with_grass", {
 	description = "Dirt with Grass",
 	tiles = {"default_grass.png", "default_dirt.png", "default_dirt.png^default_grass_side.png"},
@@ -1259,7 +1270,7 @@ minetest.register_node("default:chest", {
 })
 
 local function has_locked_chest_privilege(meta, player)
-	if player:get_player_name() ~= meta:get_string("owner") then
+	if domination.get_player_team(player) ~= meta:get_string("owner") then
 		return false
 	end
 	return true
@@ -1275,7 +1286,7 @@ minetest.register_node("default:chest_locked", {
 	sounds = default.node_sound_wood_defaults(),
 	after_place_node = function(pos, placer)
 		local meta = minetest.env:get_meta(pos)
-		meta:set_string("owner", placer:get_player_name() or "")
+		meta:set_string("owner", domination.get_player_team(placer) or "")
 		meta:set_string("infotext", "Locked Chest (owned by "..
 				meta:get_string("owner")..")")
 	end,
@@ -1539,7 +1550,7 @@ minetest.register_node("default:cobble", {
 	description = "Cobblestone",
 	tiles = {"default_cobble.png"},
 	is_ground_content = true,
-	groups = {cracky=3, stone=2},
+	groups = {cracky=1, stone=2},
 	sounds = default.node_sound_stone_defaults(),
 })
 
@@ -1558,7 +1569,7 @@ minetest.register_node("default:steelblock", {
 	groups = {snappy=1,bendy=2,cracky=1,melty=2,level=2},
 	sounds = default.node_sound_stone_defaults(),
 })
-
+--[[
 minetest.register_node("default:mese", {
 	description = "Mese Block",
 	tiles = {"default_mese_block.png"},
@@ -1567,6 +1578,7 @@ minetest.register_node("default:mese", {
 	sounds = default.node_sound_stone_defaults(),
 })
 minetest.register_alias("default:mese_block", "default:mese")
+]]
 
 minetest.register_node("default:nyancat", {
 	description = "Nyan Cat",
@@ -1665,12 +1677,12 @@ minetest.register_craftitem("default:iron_lump", {
 	description = "Iron Lump",
 	inventory_image = "default_iron_lump.png",
 })
-
+--[[
 minetest.register_craftitem("default:mese_crystal", {
 	description = "Mese Crystal",
 	inventory_image = "default_mese_crystal.png",
 })
-
+]]
 minetest.register_craftitem("default:clay_lump", {
 	description = "Clay Lump",
 	inventory_image = "default_clay_lump.png",
@@ -1680,12 +1692,12 @@ minetest.register_craftitem("default:steel_ingot", {
 	description = "Steel Ingot",
 	inventory_image = "default_steel_ingot.png",
 })
-
+--[[
 minetest.register_craftitem("default:mese_crystal_fragment", {
 	description = "Mese Crystal Fragment",
 	inventory_image = "default_mese_crystal_fragment.png",
 })
-
+]]
 minetest.register_craftitem("default:clay_brick", {
 	description = "Clay Brick",
 	inventory_image = "default_clay_brick.png",
