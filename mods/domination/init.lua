@@ -236,6 +236,7 @@ function domination.player_die(player)
 		local pos = get_coord_near(domination_config.default_spawn,{x=4,y=0,z=4})
 		player:moveto(pos)
 	end
+	domination.strip_inventory(player)
 	return true
 end
 
@@ -250,14 +251,24 @@ end
 
 function domination.strip_inventory(player)
 -- from PilzAdam's bones mod
+	local name = player:get_player_name()
 	local player_inv = player:get_inventory()
 
+		-- Clear the main inventory
 		for i=1,player_inv:get_size("main") do
 			player_inv:set_stack("main", i, nil)
 		end
+		
+		-- clear the craft grid
 		for i=1,player_inv:get_size("craft") do
 			player_inv:set_stack("craft", i, nil)
 		end
+	
+	-- clear the armor slots
+	local armor_inv = minetest.get_inventory({type="detached", name=name.."_outfit"})
+	for _,v in ipairs({"head", "torso", "legs", "shield"}) do
+		armor_inv:set_stack("armor_"..v, 1, nil)
+	end	
 end
 
 dofile( minetest.get_modpath("domination").."/config.lua" )
