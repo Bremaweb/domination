@@ -1,5 +1,5 @@
 function get_coord_near(coords,variation)
-  math.randomseed(os.time())
+  --math.randomseed(os.time())
   local randx = math.random((variation.x*-1),variation.x)
   local randz = math.random((variation.z*-1),variation.z)
   local randy = math.random((variation.y*-1),variation.y)

@@ -258,11 +258,23 @@ function domination.strip_inventory(player,drop)
 	local pos = player:getpos()
 	local player_inv = player:get_inventory()
 
-		-- Clear the main inventory
+		for _,v in ipairs({"main","craft"}) do
+			for i=1,player_inv:get_size(v) do
+			if ( drop == true ) then
+				local stack = player_inv:get_stack(v,i)
+				domination.drop_item(stack,pos)
+				--minetest.item_drop(stack,player,pos)
+			end
+			player_inv:set_stack(v, i, nil)
+			end		
+		end
+
+		--[[Clear the main inventory
 		for i=1,player_inv:get_size("main") do
 			if ( drop == true ) then
 				local stack = player_inv:get_stack("main",i)
-				minetest.item_drop(stack,player,pos)
+				domination.drop_item(stack,player,pos)
+				--minetest.item_drop(stack,player,pos)
 			end
 			player_inv:set_stack("main", i, nil)
 		end
@@ -271,19 +283,40 @@ function domination.strip_inventory(player,drop)
 		for i=1,player_inv:get_size("craft") do
 			if ( drop == true ) then
 				local stack = player_inv:get_stack("craft",i)
-				minetest.item_drop(stack,player,pos)
+				domination.drop_item(stack,player,pos)
+				--minetest.item_drop(stack,player,pos)
 			end
 			player_inv:set_stack("craft", i, nil)
 		end
-	
+		]]
+		
 	-- clear the armor slots
 	local armor_inv = minetest.get_inventory({type="detached", name=name.."_outfit"})
 	for _,v in ipairs({"head", "torso", "legs", "shield"}) do
 		if ( drop == true ) then
 			local stack = armor_inv:get_stack("armor_"..v,1)
-			minetest.item_drop(stack,player,pos)
+			domination.drop_item(stack,pos)
+			--minetest.item_drop(stack,player,pos)
 		end
 		armor_inv:set_stack("armor_"..v, 1, nil)
+	end	
+end
+
+function domination.drop_item(itemstack,pos)
+
+local name = itemstack:get_name()
+local count = itemstack:get_count()
+
+	for i=1,count do
+		npos = get_coord_near(pos,{x=3,y=0,z=3})
+		npos.y = npos.y + 2 
+		local obj = minetest.env:add_item(npos, name)
+				
+		if obj ~= nil then
+			obj:get_luaentity().collect = true
+			obj:setvelocity({x=math.random(0,6)-3, y=1, z=math.random(0,6)-3})
+		end	
+				
 	end	
 end
 
