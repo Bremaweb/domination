@@ -34,7 +34,9 @@ minetest.register_globalstep(domination.step)
 
 minetest.register_on_joinplayer(domination.player_join)
 
-minetest.register_on_respawnplayer(domination.player_die)
+minetest.register_on_respawnplayer(domination.player_respawn)
+
+minetest.register_on_dieplayer(domination.player_die)
 
 minetest.register_on_leaveplayer(domination.player_leave)
 

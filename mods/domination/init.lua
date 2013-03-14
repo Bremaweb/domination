@@ -179,7 +179,7 @@ function domination.stop_game()
     player:moveto(pos)
     
     -- remove any inventory they may have
-    domination.strip_inventory(player)
+    domination.strip_inventory(player,false)
   end
   
   -- reset the domination blocks
@@ -208,7 +208,7 @@ function domination.player_join(player)
 	  player:moveto(pos)
 	  
 	  -- strip any inventory they may have
-	  domination.strip_inventory(player)
+	  domination.strip_inventory(player,false)
 	  minetest.chat_send_player(player:get_player_name(),"Welcome! Use /teams to see available teams, /join to join a team. Use /help to see other commands available")
   	return  	
   end
@@ -226,8 +226,7 @@ function domination.player_leave(player)
   minetest.chat_send_all(player:get_player_name().." left the game ("..tostring(t)..")")
 end
 
-
-function domination.player_die(player)
+function domination.player_respawn(player)
 	if domination.game_running == true then
 		local t = domination.get_player_team(player)
 		local pos = get_coord_near(domination.teams[t].spawn,{x=4,y=0,z=4})
@@ -236,7 +235,11 @@ function domination.player_die(player)
 		local pos = get_coord_near(domination_config.default_spawn,{x=4,y=0,z=4})
 		player:moveto(pos)
 	end
-	domination.strip_inventory(player)
+	return true
+end
+
+function domination.player_die(player)	
+	domination.strip_inventory(player,true)
 	return true
 end
 
@@ -249,24 +252,37 @@ function domination.team_chat(name,message)
       end
 end
 
-function domination.strip_inventory(player)
+function domination.strip_inventory(player,drop)
 -- from PilzAdam's bones mod
 	local name = player:get_player_name()
+	local pos = player:getpos()
 	local player_inv = player:get_inventory()
 
 		-- Clear the main inventory
 		for i=1,player_inv:get_size("main") do
+			if ( drop == true ) then
+				local stack = player_inv:get_stack("main",i)
+				minetest.item_drop(stack,player,pos)
+			end
 			player_inv:set_stack("main", i, nil)
 		end
 		
 		-- clear the craft grid
 		for i=1,player_inv:get_size("craft") do
+			if ( drop == true ) then
+				local stack = player_inv:get_stack("craft",i)
+				minetest.item_drop(stack,player,pos)
+			end
 			player_inv:set_stack("craft", i, nil)
 		end
 	
 	-- clear the armor slots
 	local armor_inv = minetest.get_inventory({type="detached", name=name.."_outfit"})
 	for _,v in ipairs({"head", "torso", "legs", "shield"}) do
+		if ( drop == true ) then
+			local stack = armor_inv:get_stack("armor_"..v,1)
+			minetest.item_drop(stack,player,pos)
+		end
 		armor_inv:set_stack("armor_"..v, 1, nil)
 	end	
 end
