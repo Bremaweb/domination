@@ -86,10 +86,14 @@ function domination.join_team (name, p_team)
 	local p = minetest.env:get_player_by_name(name)
 	p:set_properties({
 		visual="mesh",
-		textures={domination.teams[string.lower(p_team)].skin},
+		-- don't set the texture here because it looks funny after installing the 3d armor mod
+		--textures={domination.teams[string.lower(p_team)].skin},
 		visual_size={x=1,y=1}		
 	})
 	domination.player_team_index[p] = string.lower(p_team)
+
+	-- updating the armor will update the character texture
+	armor_api:set_player_armor(p)
 
     if ( domination.game_running == true ) then
       -- spawn them in the game
@@ -239,7 +243,7 @@ function domination.team_chat(name,message)
       local pteam = domination.get_player_team(minetest.env:get_player_by_name(name))
       if ( pteam ~= nil ) then
 	      for i,p in ipairs(domination.teams[pteam].players) do
-		      minetest.chat_send_player(p,pteam..": "..param)
+		      minetest.chat_send_player(p,name.."("..pteam..") : "..message)
 	      end
       end
 end
