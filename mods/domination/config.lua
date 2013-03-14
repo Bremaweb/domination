@@ -1,10 +1,10 @@
 domination_config = {}
 
 -- the number a team's domination meter must reach to win the game
-domination_config.game_goal = 20
+domination_config.game_goal = 3600
 
 -- how much the team's domination meter should increase for each 5 seconds they hold a node.
-domination_config.capture_increment = .5
+domination_config.capture_increment = 1
 
 -- how many teams should be setup
 domination_config.teams = 4

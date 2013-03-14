@@ -24,7 +24,7 @@ function domination.step (dtime)
 		for t in pairs(domination.teams) do
 		    local dp = round( ( ( domination.teams[t].domination / domination_config.game_goal ) * 100 ), 2 )
 		  
-			minetest.chat_send_all(domination.teams[t].name..": "..tostring(domination.teams[t].domination).."%")
+			minetest.chat_send_all(domination.teams[t].name..": "..tostring(dp).."%")
 		end
 		domination.next_check = os.time() + 15
 	  end	  
