@@ -67,16 +67,13 @@ minetest.register_chatcommand("domination",{
 
 minetest.register_chatcommand("game_stat",{
     params = "",
-	func = function (name, param)
-		if ( os.time() > domination.next_check ) then
+	func = function (name, param)		
 		minetest.chat_send_player(name,"-----------------")
 		for t in pairs(domination.teams) do
 		    local dp = round( ( ( domination.teams[t].domination / domination_config.game_goal ) * 100 ), 2 )
 		  
-			minetest.chat_send_player(name,domination.teams[t].name..": "..tostring(domination.teams[t].domination).."%")
+			minetest.chat_send_player(name,domination.teams[t].name..": "..tostring(dp).."%")
 		end
-		domination.next_check = os.time() + 15
-	  end	 
 	end
 })
 
