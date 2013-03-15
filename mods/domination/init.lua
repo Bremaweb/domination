@@ -19,6 +19,7 @@ function domination.step (dtime)
 		end
 		domination.next_iteration = os.time() + 5
 	  end
+	  --[[
 	  if ( os.time() > domination.next_check ) then
 		minetest.chat_send_all("-----------------")
 		for t in pairs(domination.teams) do
@@ -27,7 +28,8 @@ function domination.step (dtime)
 			minetest.chat_send_all(domination.teams[t].name..": "..tostring(dp).."%")
 		end
 		domination.next_check = os.time() + 15
-	  end	  
+	  end
+	  ]]	  
   end
 end
 
