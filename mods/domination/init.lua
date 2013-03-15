@@ -313,7 +313,7 @@ function domination.drop_item(itemstack,pos)
 local name = itemstack:get_name()
 local count = itemstack:get_count()
 
-	for i=1,count do
+	for i=1,count,5 do
 		npos = get_coord_near(pos,{x=3,y=0,z=3})
 		npos.y = npos.y + 2 
 		local obj = minetest.env:add_item(npos, name)
