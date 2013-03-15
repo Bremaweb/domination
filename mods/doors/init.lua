@@ -79,8 +79,8 @@ function doors:register_door(name, def)
 				minetest.env:set_node(pt2, {name=name.."_t_2", param2=p2})
 			end
 			
-			if def.only_placer_can_open then
-				local pn = placer:get_player_name()
+			if def.only_placer_can_open then								
+				local pn = domination.get_player_team(placer)
 				local meta = minetest.env:get_meta(pt)
 				meta:set_string("doors_owner", pn)
 				meta:set_string("infotext", "Owned by "..pn)
@@ -128,7 +128,7 @@ function doors:register_door(name, def)
 			return true
 		end
 		local meta = minetest.env:get_meta(pos)
-		local pn = player:get_player_name()
+		local pn = domination.get_player_team(player)
 		return meta:get_string("doors_owner") == pn
 	end
 	

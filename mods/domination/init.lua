@@ -260,6 +260,10 @@ function domination.strip_inventory(player,drop)
 	local pos = player:getpos()
 	local player_inv = player:get_inventory()
 
+	if ( player_inv == nil ) then
+		return
+	end
+
 		for _,v in ipairs({"main","craft"}) do
 			for i=1,player_inv:get_size(v) do
 			if ( drop == true ) then
