@@ -458,7 +458,7 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
-	output = 'default:cobble',
+	output = 'default:cobble 2',
 	recipe = {
 		{'default:stone', 'default:stone'},
 		{'default:stone', 'default:stone'},
