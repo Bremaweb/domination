@@ -164,8 +164,10 @@ function domination.start_game()
 			minetest.log("action","Move player "..tostring(p))
 			
 			local pl = minetest.env:get_player_by_name(p)
-			pl:set_hp(20)
-			pl:moveto(pos)
+			if ( pl ~= nil ) then
+				pl:set_hp(20)
+				pl:moveto(pos)
+			end
 		end
 	end
 	
