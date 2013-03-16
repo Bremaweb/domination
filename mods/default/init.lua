@@ -45,7 +45,7 @@ minetest.register_tool("default:pick_wood", {
 		full_punch_interval = 1.2,
 		max_drop_level=0,
 		groupcaps={
-			crumbly = {[2]=4.50, [3]=2.60}, uses=40, maxlevel=1},
+			crumbly = {tims={[2]=4.50, [3]=2.60}, uses=40, maxlevel=1},
 			cracky = {times={[2]=3.40, [3]=2.20}, uses=10, maxlevel=1},
 			fleshy = {times={[2]=0.95, [3]=0.6}, uses=15, maxlevel=1}
 		}
