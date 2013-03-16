@@ -50,6 +50,7 @@ minetest.register_tool("default:pick_wood", {
 			fleshy = {times={[2]=0.95, [3]=0.6}, uses=15, maxlevel=1}
 		}
 	}
+  }
 )
 minetest.register_tool("default:pick_stone", {
 	description = "Stone Pickaxe",
